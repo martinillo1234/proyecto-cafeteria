@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú de cafetería</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        #total {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Menú Elegante</h1>
+        <div id="menu">
+            <h2>Selecciona una opción:</h2>
+            <button onclick="showOptions('cafe')">Café</button>
+            <button onclick="showOptions('tortas')">Tortas</button>
+            <button onclick="showOptions('hotcakes')">Hot Cakes</button>
+        </div>
+
+        <div id="options" class="hidden">
+            <h2 id="optionTitle"></h2>
+            <ul id="itemList"></ul>
+            <button onclick="goBack()">Regresar</button>
+        </div>
+
+        <div id="total" class="hidden">
+            <h2>Total a Pagar: <span id="totalAmount"></span></h2>
+            <h3>Nombre: <input type="text" id="userName" placeholder="Tu nombre"></h3>
+            <h3>Correo Electrónico: <input type="email" id="userEmail" placeholder="Tu correo"></h3>
+            <h3>Descripción de la Compra:</h3>
+            <p id="description"></p>
+            <button onclick="submitOrder()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const cafeOptions = [
+            { name: "Americano", price: 25.00, img: "/home/ing-giovanni/Descargas/cafe1.jpg" },
+            { name: "Latte", price: 30.00, img: "/home/ing-giovanni/Descargas/cafe2.jpg" },
+            { name: "Capuchino", price: 30.00, img: "/home/ing-giovanni/Descargas/cafe3.jpg" },
+            { name: "Mocacino", price: 40.00, img: "/home/ing-giovanni/Descargas/cafe4.jpg" },
+            { name: "Machiato", price: 50.00, img: "/home/ing-giovanni/Descargas/cafe5.jpg" },
+            { name: "Latte frío", price: 42.00, img: "/home/ing-giovanni/Descargas/cafe6.jpg" }
+        ];
+
+        const tortasOptions = [
+            { name: "Sandwich de jamón y queso", price: 5.0, img: "/home/ing-giovanni/Descargas/san.jpg" },
+            { name: "Baguette de pollo", price: 5.5, img: "/home/ing-giovanni/Descargas/hjh.jpg" }
+        ];
+
+        const hotcakesOptions = [
+            { name: "Hot Cakes Clásicos", price: 4.0, img: "" },
+            { name: "Hot Cakes con Frutas", price: 5.0, img: "https://example.com/hotcakes-frutas.jpg" }
+        ];
+
+        let total = 0;
+        let selectedItems = [];
+
+        function showOptions(type) {
+            let options;
+            switch (type) {
+                case 'cafe':
+                    options = cafeOptions;
+                    document.getElementById('optionTitle').innerText = "Tipos de Café";
+                    break;
+                case 'tortas':
+                    options = tortasOptions;
+                    document.getElementById('optionTitle').innerText = "Tipos de Tortas";
+                    break;
+                case 'hotcakes':
+                    options = hotcakesOptions;
+                    document.getElementById('optionTitle').innerText = "Tipos de Hot Cakes";
+                    break;
+            }
+            document.getElementById('itemList').innerHTML = options.map(item => 
+                `<li><img src="${item.img}" alt="${item.name}">${item.name} - $${item.price.toFixed(2)} <button onclick="addToTotal('${item.name}', ${item.price})">Agregar</button></li>`
+            ).join('');
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('options').classList.remove('hidden');
+        }
+
+        function addToTotal(name, price) {
+            total += price;
+            selectedItems.push(name);
+            document.getElementById('totalAmount').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('description').innerText = selectedItems.join(', ');
+            document.getElementById('total').classList.remove('hidden');
+        }
+
+        function goBack() {
+            document.getElementById('options').classList.add('hidden');
+            document.getElementById('menu').classList.remove('hidden');
+            document.getElementById('totalAmount').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('description').innerText = selectedItems.join(', ');
+            document.getElementById('total').classList.remove('hidden');
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            if (name && email) {
+                alert(`Orden enviada:\nNombre: ${name}\nCorreo: ${email}\nDescripción: ${selectedItems.join(', ')}\nTotal: $${total.toFixed(2)}`);
+                // Reset the order
+                total = 0;
+                selectedItems = [];
+                document.getElementById('totalAmount').innerText = '';
+                document.getElementById('description').innerText = '';
+                document.getElementById('userName').value = '';
+                document.getElementById('userEmail').value = '';
+                document.getElementById('total').classList.add('hidden');
+                document.getElementById('menu').classList.remove('hidden');
+            } else {
+                alert('Por favor, completa tu nombre y correo electrónico.');
+            }
+        }
+    </script>
+</body>
+</html>
